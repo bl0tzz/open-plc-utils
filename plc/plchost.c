@@ -83,6 +83,10 @@
 #include "../pib/pib.h"
 #include "../plc/plc.h"
 
+#ifndef PLC_CONTINUE_AFTER_FW
+#define PLC_CONTINUE_AFTER_FW (1U << 31)
+#endif
+
 /*====================================================================*
  *   custom source files;
  *--------------------------------------------------------------------*/
@@ -377,9 +381,10 @@ int main (int argc, char const * argv [])
 	extern void terminate (signo_t);
 	static char const * optv [] =
 	{
-		"Fi:n:N:p:P:qS:t:vw:x",
+		"CFi:n:N:p:P:qS:t:vw:x",
 		"-N file -P file [-S file]",
 		"Qualcomm Atheros PLC Host Daemon",
+		"C\tcontinue past firmware module in NVM chain",
 		"F [F]\tflash [force] non-volatile memory",
 
 #if defined (WINPCAP) || defined (LIBPCAP)
@@ -432,6 +437,9 @@ int main (int argc, char const * argv [])
 	{
 		switch (c)
 		{
+		case 'C':
+			_setbits (plc.flags, PLC_CONTINUE_AFTER_FW);
+			break;
 		case 'd':
 			_setbits (plc.flags, PLC_DAEMON);
 			break;

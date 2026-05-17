@@ -65,6 +65,10 @@
 #include "../plc/plc.h"
 #include "../nvm/nvm.h"
 
+#ifndef PLC_CONTINUE_AFTER_FW
+#define PLC_CONTINUE_AFTER_FW (1U << 31)
+#endif
+
 signed BootFirmware2 (struct plc * plc)
 
 {
@@ -112,7 +116,10 @@ signed BootFirmware2 (struct plc * plc)
 			{
 				return (-1);
 			}
-			break;
+			if (!_anyset (plc->flags, PLC_CONTINUE_AFTER_FW))
+			{
+				break;
+			}
 		}
 		if (lseek (plc->NVM.file, LE32TOH (nvm_header.NextHeader), SEEK_SET) == -1)
 		{

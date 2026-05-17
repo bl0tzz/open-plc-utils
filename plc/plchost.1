@@ -36,6 +36,12 @@ See the \fBplc\fR man page for an overview and installation instructions.
 .SH OPTIONS
 
 .TP
+-\fBC\fR
+Continue walking the NVM module chain past the firmware module.
+By default, \fBplchost\fR stops processing modules as soon as it has written and executed the first \fBNVM_IMAGE_FIRMWARE\fR entry.
+With \fB-C\fR, the firmware entry is still written and executed but the loop continues to the next module header, allowing any trailing modules in the chain to be processed.
+
+.TP
 -\fBF\fR[\fBF\fR]
 Flash NVRAM once downloaded firmware has started.
 The same firmware and PIB are downloaded, again, using VS_WR_MOD and written to NVRAM using VS_MOD_NVM.
