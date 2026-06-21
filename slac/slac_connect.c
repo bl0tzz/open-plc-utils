@@ -90,6 +90,12 @@ signed slac_connect (struct session * session)
 			slac_debug (session, 0, __func__, "%s", HEXSTRING (string, session->AAG));
 			return (0);
 		}
+		if (total == 0)
+		{
+			slac_debug (session, 0, __func__, "Average attenuation is zero from %d groups", group);
+			slac_debug (session, 0, __func__, "%s", HEXSTRING (string, session->AAG));
+			return (0);
+		}
 	}
 	return (slac_debug (session, session->exit, __func__, "Nothing to analyse"));
 }
