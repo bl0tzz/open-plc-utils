@@ -374,7 +374,7 @@ int main (int argc, char const * argv [])
 	extern struct channel channel;
 	static char const * optv [] =
 	{
-		"AcCdi:KlpSqs:t:vx",
+		"AcCdi:Klp:Sqs:t:vx",
 		"",
 		"Qualcomm Atheros Electric Vehicle Supply Equipment Emulator",
 		"A\tfake ATTEN_PROFILE when AR7420 reports all-zero measurements (bench workaround; NOT spec-compliant)",
