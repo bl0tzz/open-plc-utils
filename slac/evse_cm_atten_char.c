@@ -77,6 +77,31 @@ signed evse_cm_atten_char (struct session * session, struct channel * channel, s
 	memset (indicate->ACVarField.SOURCE_ID, 0, sizeof (indicate->ACVarField.SOURCE_ID));
 	memset (indicate->ACVarField.RESP_ID, 0, sizeof (indicate->ACVarField.RESP_ID));
 	indicate->ACVarField.NUM_SOUNDS = session->sounds;
+	if (_anyset (session->flags, SLAC_FAKEATTEN))
+	{
+		unsigned k;
+		int all_zero = 1;
+		for (k = 0; k < SLAC_GROUPS; k++)
+		{
+			if (session->AAG [k] != 0)
+			{
+				all_zero = 0;
+				break;
+			}
+		}
+		if (all_zero)
+		{
+			slac_debug (session, 0, __func__, "-A: measured AAG all zero (AR7420 not reporting); injecting fake ATTEN_PROFILE");
+			for (k = 0; k + 3 < SLAC_GROUPS; k++)
+			{
+				session->AAG [k] = 0x09;
+			}
+			session->AAG [SLAC_GROUPS - 3] = 0x0F;
+			session->AAG [SLAC_GROUPS - 2] = 0x13;
+			session->AAG [SLAC_GROUPS - 1] = 0x19;
+			session->NumGroups = SLAC_GROUPS;
+		}
+	}
 	indicate->ACVarField.ATTEN_PROFILE.NumGroups = session->NumGroups;
 	memcpy (indicate->ACVarField.ATTEN_PROFILE.AAG, session->AAG, session->NumGroups);
 	if (sendmessage (channel, message, sizeof (* indicate)) <= 0)

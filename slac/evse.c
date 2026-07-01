@@ -374,9 +374,10 @@ int main (int argc, char const * argv [])
 	extern struct channel channel;
 	static char const * optv [] =
 	{
-		"cCdi:Klp:qs:t:vx",
+		"AcCdi:Klp:qs:t:vx",
 		"",
 		"Qualcomm Atheros Electric Vehicle Supply Equipment Emulator",
+		"A\tfake ATTEN_PROFILE when AR7420 reports all-zero measurements (bench workaround; NOT spec-compliant)",
 		"c\tprint template configuration file on stdout",
 		"C\tstop on count mismatch",
 		"d\tdisplay debug information",
@@ -432,6 +433,9 @@ int main (int argc, char const * argv [])
 	{
 		switch (c)
 		{
+		case 'A':
+			_setbits (session.flags, SLAC_FAKEATTEN);
+			break;
 		case 'c':
 			configure ();
 			return (0);
