@@ -374,7 +374,7 @@ int main (int argc, char const * argv [])
 	extern struct channel channel;
 	static char const * optv [] =
 	{
-		"AcCdi:Klp:qs:t:vx",
+		"AcCdi:KlpSqs:t:vx",
 		"",
 		"Qualcomm Atheros Electric Vehicle Supply Equipment Emulator",
 		"A\tfake ATTEN_PROFILE when AR7420 reports all-zero measurements (bench workaround; NOT spec-compliant)",
@@ -394,6 +394,7 @@ int main (int argc, char const * argv [])
 		"K\tstop after sounding finished",
 		"l\tdo not loop but exit after one run",
 		"p s\tconfiguration profile is (s) [" LITERAL (PROFILE) "]",
+		"S\texit as soon as CM_SLAC_MATCH.CNF is sent; skip MatchedState sleeps",
 		"s s\tconfiguration section is (s) [" LITERAL (SECTION) "]",
 		"q\tquiet mode",
 		"t n\tread timeout is (n) milliseconds [" LITERAL (SLAC_TIMEOUT) "]",
@@ -468,6 +469,9 @@ int main (int argc, char const * argv [])
 		case 'p':
 			profile = optarg;
 			break;
+		case 'S':
+			_setbits (session.flags, SLAC_STOPAFTERMATCH);
+			break;
 		case 's':
 			section = optarg;
 			break;
@@ -517,6 +521,11 @@ int main (int argc, char const * argv [])
 			UnmatchedState (& session, & channel, & message);
 			if (dont_loop && session.state == EVSE_STATE_UNAVAILABLE)
 			{
+				break;
+			}
+			if (session.state == EVSE_STATE_MATCHED && _anyset (session.flags, SLAC_STOPAFTERMATCH))
+			{
+				slac_debug (& session, 0, __func__, "-S: SLAC MATCH complete; exiting before MatchedState sleeps");
 				break;
 			}
 			continue;
